@@ -348,7 +348,7 @@ class WPCF7_FormTagsManager {
 		$text = preg_replace( "/[\x{00a0}\x{200b}]+/u", " ", $text );
 		$text = stripcslashes( trim( $text ) );
 
-		$pattern = '%^([-+*=0-9a-zA-Z:.!?#$&@_/|\%\r\n\t ]*?)((?:[\r\n\t ]*"[^"]*"|[\r\n\t ]*\'[^\']*\')*)$%';
+		$pattern = '%^([-+*=0-9a-zA-Z:.!?#$&@_/|\%\r\n\t ]*?)((?:[\r\n\t ]*"[^"]*"|[\r\n\t ]*\'[^\']*\')*)([-+*=0-9a-zA-Z:.!?#$&@_/|\%\r\n\t ]*?)$%';
 
 		if ( preg_match( $pattern, $text, $match ) ) {
 			if ( ! empty( $match[1] ) ) {
@@ -358,6 +358,10 @@ class WPCF7_FormTagsManager {
 			if ( ! empty( $match[2] ) ) {
 				preg_match_all( '/"[^"]*"|\'[^\']*\'/', $match[2], $matched_values );
 				$atts['values'] = wpcf7_strip_quote_deep( $matched_values[0] );
+			}
+
+			if ( ! empty( $match[3] ) ) { 
+				$atts['options'] = array_merge($atts['options'], preg_split( '/[\r\n\t ]+/', trim( $match[3] ) ) );
 			}
 		} else {
 			$atts = $text;
